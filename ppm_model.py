@@ -188,33 +188,34 @@ class PPMModel:
                 print(f"esc     {unique_symbols:<7} {prob_esc:.4f}")
 
     def process_symbol(self, symbol, history):
+        """Prints de DEBUG
         print(f"\n--- Processando símbolo: '{symbol}' ---")
-        print(f"Histórico atual: '{''.join(history)}'")
+        print(f"Histórico atual: '{''.join(history)}'")"""
 
         excluded_symbols = set()
         prob_info = self._get_probability_with_details(symbol, history, excluded_symbols)
 
-        print("\nPassos de codificação:")
+        #print("\nPassos de codificação:")
         for step in prob_info.get('steps', []):
-            print(f"  {step}")
+            #print(f"  {step}")
             if "Ordem" in step and "contexto" in step:
                 parts = step.split("'")
                 if len(parts) >= 2:
                     context = parts[1]
                     order_num = int(step.split()[1][:-1])
-                    self.print_current_context(order_num, context, prob_info.get('excluded', set()))
+                    """self.print_current_context(order_num, context, prob_info.get('excluded', set()))
             elif "Ordem 0" in step:
-                self.print_current_context(0, None, prob_info.get('excluded', set()))
+                self.print_current_context(0, None, prob_info.get('excluded', set()))"""
 
         probability = prob_info.get('prob', 0.0)
         formula = prob_info.get('formula', '')
-        print(f"\nProbabilidade final: {formula} = {probability:.4f}")
+        #print(f"\nProbabilidade final: {formula} = {probability:.4f}")
 
         if probability > 0:
             bits = -math.log2(probability)
             self.total_bits += bits
             self.total_symbols += 1
-            print(f"Contribuição para entropia: {bits:.4f} bits")
+            #print(f"Contribuição para entropia: {bits:.4f} bits")
 
         self.update(symbol, history)
         return symbol
