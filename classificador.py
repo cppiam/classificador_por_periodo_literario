@@ -43,9 +43,6 @@ if __name__ == "__main__":
     text = text.split()
     texto_limpo = " ".join(text)
 
-    with open("saida.txt", 'w', encoding='utf-8') as f:
-        f.write(texto_limpo)
-
     predicted_period, entropies = classify_text_by_entropy(texto_limpo, model_paths, alphabet, order=5)
 
     print(f"\n--- Resultados da Classificação ---")
