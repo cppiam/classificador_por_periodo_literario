@@ -1,5 +1,4 @@
 import os
-import json
 from ppm_model import PPMModel
 
 def build_alphabet_from_txts(directory="books"):
