@@ -1,8 +1,20 @@
 from ppm_model import PPMModel
 import math
+import os
+
+def build_alphabet_from_txts(directory="books"):
+    charset = set()
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".txt"):
+                file_path = os.path.join(root, file)
+                with open(file_path, encoding="utf-8") as f:
+                    text = f.read()
+                    charset.update(text)
+    return sorted(charset)
 
 def main():
-    alphabet = ['a', 'b', 'c', 'd', 'r']
+    alphabet = build_alphabet_from_txts()
     model = PPMModel(alphabet, order=2)
     message = "abracadabra"
     history = []
