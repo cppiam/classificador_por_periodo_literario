@@ -7,9 +7,9 @@ def classify_text_by_entropy(text, model_paths, alphabet, order=5):
 
     for period, path in model_paths.items():
         print(f"\nCarregando modelo para '{period}'...")
-        model = PPMModel(alphabet, order) # Inicializa com ordem padrão ou carregada
+        model = PPMModel(alphabet, order)
         model.load_model(path)
-        model.total_bits = 0.0  # Resetar a entropia total para o novo texto
+        model.total_bits = 0.0
         model.total_symbols = 0
 
         print(f"Calculando entropia para '{period}'...")
@@ -20,8 +20,8 @@ def classify_text_by_entropy(text, model_paths, alphabet, order=5):
             if len(history) > model.order:
                 history.pop(0)
 
-        models_entropy[period] = model.total_bits
-        print(f"Entropia total para '{period}': {model.total_bits/model.total_symbols:.4f} bits")
+        models_entropy[period] = model.total_bits/model.total_symbols
+        #print(f"Entropia média para '{period}': {models_entropy[period]:.4f} bits")
 
     best_period = min(models_entropy, key=models_entropy.get)
     return best_period, models_entropy
@@ -34,18 +34,21 @@ if __name__ == "__main__":
         "modernismo": "ppm_tabela_modernismo.json"
     }
 
-    alphabet = build_alphabet_from_txts("books") # Reutilizando sua função
+    alphabet = build_alphabet_from_txts("books")
 
-    with open("texto.txt", 'rb') as f:
+    with open("O curtiço.txt", 'rb') as f:
         text = f.read().decode('utf-8')
 
     text = text.lower()
     text = text.split()
     texto_limpo = " ".join(text)
 
+    with open("saida.txt", 'w', encoding='utf-8') as f:
+        f.write(texto_limpo)
+
     predicted_period, entropies = classify_text_by_entropy(texto_limpo, model_paths, alphabet, order=5)
 
     print(f"\n--- Resultados da Classificação ---")
     for period, entropy in entropies.items():
-        print(f"Entropia total para '{period}': {entropy:.2f} bits")
+        print(f"Entropia média para '{period}': {entropy:.4f} bits")
     print(f"\nO texto foi classificado como pertencente ao período: {predicted_period}")

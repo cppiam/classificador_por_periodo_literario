@@ -28,15 +28,16 @@ class PPMModel:
         for k in range(1, self.order + 1):
             if len(history) >= k:
                 context = "".join(history[-k:])
-                if context not in self.contexts[k]:
-                    self.contexts[k][context] = {'symbols': set(), 'frequencies': {}}
+                if k in self.contexts:  # Certifique-se de manter essa verificação para evitar o KeyError
+                    if context not in self.contexts[k]:
+                        self.contexts[k][context] = {'symbols': set(), 'frequencies': {}}
 
-                if symbol not in self.contexts[k][context]['symbols']:
-                    self.contexts[k][context]['symbols'].add(symbol)
+                    if symbol not in self.contexts[k][context]['symbols']:
+                        self.contexts[k][context]['symbols'].add(symbol)
 
-                if symbol not in self.contexts[k][context]['frequencies']:
-                    self.contexts[k][context]['frequencies'][symbol] = 0
-                self.contexts[k][context]['frequencies'][symbol] += 1
+                    if symbol not in self.contexts[k][context]['frequencies']:
+                        self.contexts[k][context]['frequencies'][symbol] = 0
+                    self.contexts[k][context]['frequencies'][symbol] += 1
 
     def _get_probability_with_details(self, symbol, history, excluded=None):
         if excluded is None:
@@ -191,7 +192,7 @@ class PPMModel:
 
     def process_symbol(self, symbol, history):
         #Prints de DEBUG
-        print(f"\n--- Processando símbolo: '{symbol}' ---")
+        #print(f"\n--- Processando símbolo: '{symbol}' ---")
         #print(f"Histórico atual: '{''.join(history)}'")
 
         excluded_symbols = set()
