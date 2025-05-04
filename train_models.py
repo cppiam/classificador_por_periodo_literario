@@ -1,4 +1,5 @@
 import os
+import json
 from ppm_model import PPMModel
 
 def build_alphabet_from_txts(directory="books"):
@@ -25,7 +26,7 @@ def train_and_save_model(period_name, file_path, alphabet, order=5):
         model.update(symbol, history)
         history.append(symbol)
 
-    output_file = f"ppm_tabela_{period_name.lower()}.txt"
+    output_file = f"ppm_tabela_{period_name.lower()}.json"
     model.save_model(output_file)
 
 periodos = {
@@ -38,4 +39,4 @@ periodos = {
 if __name__ == "__main__":
     alphabet = build_alphabet_from_txts("books")
     for periodo, caminho in periodos.items():
-        train_and_save_model(periodo, caminho, alphabet)
+        train_and_save_model(periodo, caminho, alphabet, order=5)

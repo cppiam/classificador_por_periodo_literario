@@ -1,4 +1,5 @@
 import math
+import json
 
 class PPMModel:
     def __init__(self, alphabet, order):
@@ -50,10 +51,11 @@ class PPMModel:
         for k in range(self.order, 0, -1):
             if len(history) >= k:
                 context = "".join(history[-k:])
-                if context in self.contexts[k]:
+                if k in self.contexts and context in self.contexts[k]:
                     frequencies = self.contexts[k][context]['frequencies']
                     unique_symbols = len(self.contexts[k][context]['symbols'])
                     total = sum(frequencies.values())
+
 
                     if symbol in frequencies and symbol not in current_excluded:
                         step_prob = frequencies[symbol] / (total + unique_symbols)
@@ -188,9 +190,9 @@ class PPMModel:
                 print(f"esc     {unique_symbols:<7} {prob_esc:.4f}")
 
     def process_symbol(self, symbol, history):
-        """Prints de DEBUG
+        #Prints de DEBUG
         print(f"\n--- Processando símbolo: '{symbol}' ---")
-        print(f"Histórico atual: '{''.join(history)}'")"""
+        #print(f"Histórico atual: '{''.join(history)}'")
 
         excluded_symbols = set()
         prob_info = self._get_probability_with_details(symbol, history, excluded_symbols)
@@ -225,6 +227,36 @@ class PPMModel:
             print("\n=== ESTATÍSTICAS FINAIS ===")
             print(f"Total de bits: {self.total_bits:.4f}")
             print(f"Entropia média: {self.total_bits/self.total_symbols:.4f} bits/símbolo")
+
+    def save_model(self, filename):
+        model_data = {
+            "order": self.order,
+            "contexts": {
+                k: {
+                    context: {
+                        'symbols': sorted(list(data['symbols'])),  # Converter set para lista
+                        'frequencies': data['frequencies']
+                    }
+                    for context, data in v.items()
+                }
+                for k, v in self.contexts.items()
+            },
+            "k0_frequencies": self.k0_frequencies,
+            "alphabet": sorted(list(self.alphabet)),  # Converter set para lista
+            "seen_symbols": sorted(list(self.seen_symbols))  # Converter set para lista
+        }
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(model_data, f, indent=4)
+
+    def load_model(self, filename):
+        with open(filename, 'r', encoding='utf-8') as f:
+            model_data = json.load(f)
+        self.order = model_data["order"]
+        self.contexts = model_data["contexts"]
+        self.k0_frequencies = model_data["k0_frequencies"]
+        self.alphabet = set(model_data["alphabet"])
+        self.seen_symbols = set(model_data["seen_symbols"])
+        self.k0_unique_symbols = len(self.k0_frequencies)
 
 
 if __name__ == "__main__":
